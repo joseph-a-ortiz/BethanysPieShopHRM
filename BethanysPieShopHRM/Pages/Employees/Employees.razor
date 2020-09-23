@@ -9,6 +9,9 @@
 }
 else
 {
+    <div class="row">
+        <input class="form-control" @bind-value="@_searchTerm" @bind-value:event="oninput" placeholder="Search..." style="width:200px; margin:5px 20px;" />
+    </div>
     <table class="table">
         <thead>
             <tr>
@@ -24,7 +27,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in _items)
+            @foreach (var item in _filteredItems)
             {
                 <tr>
                     <td><img src="@($"https://gillcleerenpluralsight.blob.core.windows.net/person/{item.EmployeeId}-small.jpg")" class="rounded-circle" /></td>
@@ -68,8 +71,23 @@ else
     [Parameter] public bool IsSelection { get; set; }
     [Parameter] public EventCallback<Employee> SelectionCallBack { get; set; }
 
-    public List<Employee> _items { get; set; }
-    public List<Country> Countries { get; set; }
+    private List<Employee> _items { get; set; }
+    private List<Employee> _filteredItems { get; set; }
+
+    private string searchTerm;
+    public string _searchTerm
+    {
+        get { return searchTerm; }
+        set
+        {
+            searchTerm = value;
+            _filteredItems = _items.Where(x =>
+                string.IsNullOrWhiteSpace(searchTerm) ||
+                x.FirstName.ToLower().Contains(searchTerm) ||
+                x.LastName.ToLower().Contains(searchTerm)
+            ).ToList();
+        }
+    }
 
     private BethanysPieShopHRM.Pages.Employees.EmployeeAddEdit _employeeAddEdit;
     private BethanysPieShopHRM.Pages.Employees.EmployeeDetail _employeeDetail;
@@ -78,7 +96,7 @@ else
     {
         IsSelection = false;
         _items = await _db.Employees.ToListAsync();
-
+        _filteredItems = _items;
         //AddEmployeeDialog.OnDialogClose += AddEmployeeDialog_OnDialogClose;
     }
 
