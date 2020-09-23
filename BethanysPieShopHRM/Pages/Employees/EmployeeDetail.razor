@@ -1,0 +1,190 @@
+﻿@inherits OwningComponentBase<ApplicationDbContext>
+
+@if (_show)
+{
+    <div class="modal" tabindex="-1" style="display:block;">
+        <div class="modal-dialog  modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Employee Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="@close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <section class="employee-detail">
+                        <h1 class="page-title">Details for @_model.FirstName @_model.LastName</h1>
+
+                        @{
+                            var leadingFormat = "00000";
+                            //var a = _model.EmployeeId.ToString("00000");
+                        }
+
+                        <div class="col-12 row">
+                            <div class="col-2">
+                                <img src="@($"https://gillcleerenpluralsight.blob.core.windows.net/person/{_model.EmployeeId}.jpg")" class="img-responsive rounded-circle employee-detail-img" />
+                            </div>
+                            <div class="col-10 row">
+                                <div class="col-xs-12 col-sm-8">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label">Employee ID</label>
+                                        <div class="col-sm-8">
+                                            <label type="text" class="form-control-plaintext">@_model.EmployeeId.ToString(leadingFormat)</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label">First name</label>
+                                        <div class="col-sm-8">
+                                            <label type="text" readonly class="form-control-plaintext">@_model.FirstName</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label">Last name</label>
+                                        <div class="col-sm-8">
+                                            <label type="text" readonly class="form-control-plaintext">@_model.LastName</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label">Birthdate</label>
+                                        <div class="col-sm-8">
+                                            <label type="text" readonly class="form-control-plaintext">@_model.BirthDate.ToShortDateString()</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label">Email</label>
+                                        <div class="col-sm-8">
+                                            <label type="text" readonly class="form-control-plaintext">@_model.Email</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label">Street</label>
+                                        <div class="col-sm-8">
+                                            <label type="text" readonly class="form-control-plaintext">@_model.Street</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label">Zip</label>
+                                        <div class="col-sm-8">
+                                            <label type="text" readonly class="form-control-plaintext">@_model.Zip</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label">City</label>
+                                        <div class="col-sm-8">
+                                            <label type="text" readonly class="form-control-plaintext">@_model.City</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label">Phone number</label>
+                                        <div class="col-sm-8">
+                                            <label type="text" readonly class="form-control-plaintext">@_model.PhoneNumber</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label">Gender</label>
+                                        <div class="col-sm-8">
+                                            <label type="text" readonly class="form-control-plaintext">@_model.Gender</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label">Smoker</label>
+                                        <div class="col-sm-8">
+
+                                            @if (_model.Smoker)
+                                            {
+                                                <label type="text" readonly class="form-control-plaintext">Yes</label>
+                                            }
+                                            else
+                                            {
+                                                <label type="text" readonly class="form-control-plaintext">No</label>
+
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label">Job category</label>
+                                        <div class="col-sm-8">
+                                            <label type="text" readonly class="form-control-plaintext">@JobCategory</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label">Joined us</label>
+                                        <div class="col-sm-8">
+                                            <label type="text" readonly class="form-control-plaintext">@_model.JoinedDate?.ToShortDateString()</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label">Left us</label>
+                                        <div class="col-sm-8">
+                                            <label type="text" readonly class="form-control-plaintext">@_model.ExitDate?.ToShortDateString()</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                @*<div class="col-xs-12 col-sm-4">
+                                        <div class="track-order-map">
+                                            <Map Zoom="10" Markers="MapMarkers"></Map>
+                                        </div>
+                                    </div>*@
+                            </div>
+                        </div>
+
+
+                    </section>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal" @onclick="@close">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code{
+    ApplicationDbContext _db => Service;
+    //[Parameter] public string EmployeeId { get; set; }
+
+    //public List<Marker> MapMarkers { get; set; } = new List<Marker>();
+
+    public Employee _model { get; set; }
+    protected string JobCategory = string.Empty;
+
+    private bool _show;
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    //_model = await _db.Employees.SingleOrDefaultAsync(x => x.EmployeeId == int.Parse(EmployeeId));
+    //    //JobCategory = (await _db.JobCategories.SingleOrDefaultAsync(x => x.JobCategoryId == _model.JobCategoryId)).JobCategoryName;
+
+    //    //MapMarkers = new List<Marker>
+    //    //{
+    //    //        new Marker{Description = $"{_model.FirstName} {_model.LastName}",  ShowPopup = false, X = _model.Longitude, Y = _model.Latitude}
+    //    //    };
+    //}
+
+    public async Task Show(Employee model)
+    {
+        _model = model;
+        JobCategory = (await _db.JobCategories.SingleOrDefaultAsync(x => x.JobCategoryId == _model.JobCategoryId)).JobCategoryName;
+
+        _show = true;
+        StateHasChanged();
+    }
+    private void close()
+    {
+        _show = false;
+        StateHasChanged();
+    }
+}

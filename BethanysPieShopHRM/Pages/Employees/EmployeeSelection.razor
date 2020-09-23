@@ -1,0 +1,45 @@
+﻿
+<div class="modal" tabindex="-1" style="display:@(_show ? "block" : "hide");">
+    <div class="modal-dialog  modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="@close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <Employees SelectionCallBack="@Reciever" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-dismiss="modal" @onclick="@close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    public Employee _recievedItem { get; set; }
+    [Parameter] public EventCallback<Employee> SelectionCallBack { get; set; }
+
+    private void Reciever(Employee recievedItem)
+    {
+        _recievedItem = recievedItem;
+        StateHasChanged();
+    }
+
+    private bool _show { get; set; }
+
+    public void Show()
+    {
+        _show = true;
+        StateHasChanged();
+    }
+    private async Task close()
+    {
+        await SelectionCallBack.InvokeAsync(_recievedItem);
+
+        _show = false;
+        StateHasChanged();
+    }
+}

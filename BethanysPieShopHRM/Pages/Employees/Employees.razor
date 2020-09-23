@@ -1,0 +1,129 @@
+﻿@page "/employees"
+@inherits OwningComponentBase<ApplicationDbContext>
+
+<h1 class="page-title">All employees</h1>
+
+@if (_items == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    <a @onclick="@(()=> showAddEdit())" href="javascript:void(0);" class="btn btn-primary table-btn">
+                        <i class="fas fa-plus"></i>
+                    </a>
+                </th>
+                <th>Employee ID</th>
+                <th>First name</th>
+                <th>Last name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in _items)
+            {
+                <tr>
+                    <td><img src="@($"https://gillcleerenpluralsight.blob.core.windows.net/person/{item.EmployeeId}-small.jpg")" class="rounded-circle" /></td>
+                    <td>@item.EmployeeId</td>
+                    <td>@item.FirstName</td>
+                    <td>@item.LastName</td>
+                    <td>
+                        <a class="btn btn-outline-info" @onclick="@(async ()=> await showDetail(item))" href="javascript:void(0);" style="border:0;">
+                            <i class="fas fa-info-circle"></i>
+                        </a>
+                        <a class="btn btn-outline-success" @onclick="@(()=> showAddEdit(item))" href="javascript:void(0);" style="border:0;">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a class="btn btn-outline-danger" @onclick="@(()=> delete(item))" href="javascript:void(0);" style="border:0;">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                        <a class="btn btn-outline-primary" @onclick="@(async ()=> await select(item))" href="javascript:void(0);" style="border:0;">
+                            <i class="fas fa-check"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<EmployeeAddEdit @ref="_employeeAddEdit" CloseEventCallback="@OnAddEditClose"></EmployeeAddEdit>
+<EmployeeDetail @ref="_employeeDetail"></EmployeeDetail>
+
+@*<button @onclick="QuickAddEmployee" class="btn btn-dark table-btn quick-add-btn">&nbsp;&nbsp;+&nbsp;&nbsp;</button>
+
+    <AddEmployeeDialog @ref="AddEmployeeDialog" CloseEventCallback="@AddEmployeeDialog_OnDialogClose"></AddEmployeeDialog>*@
+
+@code{
+    ApplicationDbContext _db => Service;
+    [Inject] public IJSRuntime _js { get; set; }
+
+    [Parameter] public EventCallback<Employee> SelectionCallBack { get; set; }
+
+    public List<Employee> _items { get; set; }
+    public List<Country> Countries { get; set; }
+
+    private BethanysPieShopHRM.Pages.Employees.EmployeeAddEdit _employeeAddEdit;
+    private BethanysPieShopHRM.Pages.Employees.EmployeeDetail _employeeDetail;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _items = await _db.Employees.ToListAsync();
+
+        //AddEmployeeDialog.OnDialogClose += AddEmployeeDialog_OnDialogClose;
+    }
+
+    #region components
+    private void showAddEdit(Employee item = null)
+    {
+        _employeeAddEdit.Show(item);
+    }
+    private async Task showDetail(Employee item)
+    {
+        await _employeeDetail.Show(item);
+    }
+    #endregion components
+
+    protected async Task delete(Employee item)
+    {
+        bool confirmed = await _js.InvokeAsync<bool>("confirm", "Are you sure?");
+        if (confirmed)
+        {
+            try
+            {
+                _db.Employees.Remove(item);
+                await _db.SaveChangesAsync();
+
+                await _js.InvokeVoidAsync("alert", "Saved!");
+
+                await loadAsync();
+
+            }
+            catch (Exception)
+            {
+                await _js.InvokeVoidAsync("alert", "Error Saving Data!!!");
+            }
+        }
+    }
+
+    private async Task select(Employee selectedItem)
+    {
+        await SelectionCallBack.InvokeAsync(selectedItem);
+        StateHasChanged();
+    }
+
+    private async Task OnAddEditClose()
+    {
+        await loadAsync();
+    }
+
+    private async Task loadAsync()
+    {
+        _items = await _db.Employees.ToListAsync();
+        StateHasChanged();
+    }
+}
