@@ -41,9 +41,12 @@ else
                         <a class="btn btn-outline-danger" @onclick="@(()=> delete(item))" href="javascript:void(0);" style="border:0;">
                             <i class="fas fa-trash"></i>
                         </a>
-                        <a class="btn btn-outline-primary" @onclick="@(async ()=> await select(item))" href="javascript:void(0);" style="border:0;">
-                            <i class="fas fa-check"></i>
-                        </a>
+                        @if (IsSelection)
+                        {
+                            <a class="btn btn-outline-primary" @onclick="@(async ()=> await select(item))" href="javascript:void(0);" style="border:0;">
+                                <i class="fas fa-check"></i>
+                            </a>
+                        }
                     </td>
                 </tr>
             }
@@ -62,6 +65,7 @@ else
     ApplicationDbContext _db => Service;
     [Inject] public IJSRuntime _js { get; set; }
 
+    [Parameter] public bool IsSelection { get; set; }
     [Parameter] public EventCallback<Employee> SelectionCallBack { get; set; }
 
     public List<Employee> _items { get; set; }
@@ -72,6 +76,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        IsSelection = false;
         _items = await _db.Employees.ToListAsync();
 
         //AddEmployeeDialog.OnDialogClose += AddEmployeeDialog_OnDialogClose;
